@@ -1,4 +1,4 @@
-const API_URL = 'https://nutrifesbackend.onrender.com';
+const API_URL = 'https://nutrifesbackend.onrender.com/api';
 
 export const getPatients = async () => {
   const res = await fetch(`${API_URL}/patients`);
