@@ -5,7 +5,7 @@ import { createPatient } from '../api';
 export default function NewPatient() {
   const navigate = useNavigate();
   const availableTags = [
-    'Vegano', 'Vegetariano', 'Celiaquía', 'Sedentario', 'Deportista', 
+    'Vegano', 'Vegetariano', 'Celiaquía', 'Sedentario', 'Deportista',
     'Adulto Mayor', 'Obesidad', 'Diabetes', 'TCA', 'Embarazo/Lactancia'
   ];
 
@@ -22,7 +22,7 @@ export default function NewPatient() {
   const toggleTag = (tag) => {
     setFormData(prev => ({
       ...prev,
-      tags: prev.tags.includes(tag) 
+      tags: prev.tags.includes(tag)
         ? prev.tags.filter(t => t !== tag)
         : [...prev.tags, tag]
     }));
@@ -57,7 +57,7 @@ export default function NewPatient() {
     if (name === 'height') {
       // Reemplaza comas por puntos y elimina letras
       value = value.replace(',', '.').replace(/[^0-9.]/g, '');
-      
+
       // Asegurarse de que solo haya un punto
       const parts = value.split('.');
       if (parts.length > 2) {
@@ -89,22 +89,22 @@ export default function NewPatient() {
         <div className="flex-row" style={{ gap: '1rem' }}>
           <div className="form-group" style={{ flex: 1 }}>
             <label className="form-label">Nombre</label>
-            <input 
-              required 
-              type="text" 
-              name="first_name" 
-              className="form-input" 
+            <input
+              required
+              type="text"
+              name="first_name"
+              className="form-input"
               value={formData.first_name}
               onChange={handleChange}
             />
           </div>
           <div className="form-group" style={{ flex: 1 }}>
             <label className="form-label">Apellido</label>
-            <input 
-              required 
-              type="text" 
-              name="last_name" 
-              className="form-input" 
+            <input
+              required
+              type="text"
+              name="last_name"
+              className="form-input"
               value={formData.last_name}
               onChange={handleChange}
             />
@@ -114,11 +114,11 @@ export default function NewPatient() {
         <div className="flex-row" style={{ gap: '1rem' }}>
           <div className="form-group" style={{ flex: 1 }}>
             <label className="form-label">Edad</label>
-            <input 
-              required 
-              type="number" 
-              name="age" 
-              className="form-input" 
+            <input
+              required
+              type="number"
+              name="age"
+              className="form-input"
               min="1"
               value={formData.age}
               onChange={handleChange}
@@ -126,12 +126,12 @@ export default function NewPatient() {
           </div>
           <div className="form-group" style={{ flex: 1 }}>
             <label className="form-label">Altura (en metros, ej: 1.75)</label>
-            <input 
-              required 
-              type="text" 
+            <input
+              required
+              type="text"
               inputMode="decimal"
-              name="height" 
-              className="form-input" 
+              name="height"
+              className="form-input"
               value={formData.height}
               placeholder="Ej: 1.75"
               onChange={handleChange}
@@ -142,21 +142,21 @@ export default function NewPatient() {
         <div className="flex-row" style={{ gap: '1rem' }}>
           <div className="form-group" style={{ flex: 1 }}>
             <label className="form-label">Teléfono de contacto (Opcional)</label>
-            <input 
-              type="tel" 
-              name="phone" 
-              className="form-input" 
+            <input
+              type="tel"
+              name="phone"
+              className="form-input"
               value={formData.phone}
               onChange={handleChange}
               placeholder="Ej: +123456789"
             />
           </div>
           <div className="form-group" style={{ flex: 1 }}>
-            <label className="form-label">Objetivo (Opcional, para recomendaciones IA en el futuro)</label>
-            <input 
-              type="text" 
-              name="goal" 
-              className="form-input" 
+            <label className="form-label">Objetivo (Opcional)</label>
+            <input
+              type="text"
+              name="goal"
+              className="form-input"
               value={formData.goal}
               onChange={handleChange}
               placeholder="Ej: Bajar 5kg, ganar masa muscular..."
