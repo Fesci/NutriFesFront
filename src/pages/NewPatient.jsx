@@ -32,7 +32,25 @@ export default function NewPatient() {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+
+    if (name === 'height') {
+      // Reemplaza comas por puntos y elimina letras
+      value = value.replace(',', '.').replace(/[^0-9.]/g, '');
+      
+      // Asegurarse de que solo haya un punto
+      const parts = value.split('.');
+      if (parts.length > 2) {
+        value = parts[0] + '.' + parts.slice(1).join('');
+      }
+
+      // Auto-insertar el punto después del primer dígito si hay 2 o más números sin punto
+      if (value.length >= 2 && !value.includes('.')) {
+        value = value.substring(0, 1) + '.' + value.substring(1);
+      }
+    }
+
+    setFormData({ ...formData, [name]: value });
   };
 
   return (
@@ -87,15 +105,15 @@ export default function NewPatient() {
             />
           </div>
           <div className="form-group" style={{ flex: 1 }}>
-            <label className="form-label">Altura (en metros, e.g., 1.75)</label>
+            <label className="form-label">Altura (en metros, ej: 1.75)</label>
             <input 
               required 
-              type="number" 
-              step="0.01" 
+              type="text" 
+              inputMode="decimal"
               name="height" 
               className="form-input" 
-              min="0.5"
               value={formData.height}
+              placeholder="Ej: 1.75"
               onChange={handleChange}
             />
           </div>
