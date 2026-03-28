@@ -46,6 +46,12 @@ export default function PatientDetail() {
 
   return (
     <div>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <Link to="/" className="btn btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
+          ← Volver a Pacientes
+        </Link>
+      </div>
+
       <div className="card">
         <div className="card-header">
           <h2>{patient.first_name} {patient.last_name}</h2>
@@ -98,35 +104,13 @@ export default function PatientDetail() {
         </div>
       </div>
 
-      <div className="card mt-4">
-        <h3>Evolución de IMC</h3>
-        {consultations.length > 0 ? (
-          <div style={{ height: '300px', width: '100%', marginTop: '1rem' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <Line type="monotone" dataKey="imc" stroke="var(--primary-color)" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-                <CartesianGrid stroke="#e2e8f0" strokeDasharray="5 5" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickMargin={10} />
-                <YAxis domain={['dataMin - 1', 'dataMax + 1']} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-md)' }}
-                  labelStyle={{ fontWeight: 'bold', color: 'var(--text-main)', marginBottom: '4px' }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Requiere al menos una consulta para visualizar evolución.</p>
-        )}
-      </div>
-
-      <div className="card mt-4">
-        <h3>Historial de Consultas ({consultations.length})</h3>
+      <div className="card mt-4" style={{ textAlign: 'center' }}>
+        <h3 style={{ marginBottom: '1.5rem' }}>Historial de Consultas ({consultations.length})</h3>
         
         {consultations.length === 0 ? (
           <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Este paciente aún no tiene consultas.</p>
         ) : (
-          <div className="table-container mt-4">
+          <div className="table-container mt-4" style={{ textAlign: 'left' }}>
             <table className="data-table">
               <thead>
                 <tr>
@@ -148,6 +132,28 @@ export default function PatientDetail() {
               </tbody>
             </table>
           </div>
+        )}
+      </div>
+
+      <div className="card mt-4">
+        <h3>Evolución de IMC</h3>
+        {consultations.length > 0 ? (
+          <div style={{ height: '300px', width: '100%', marginTop: '1rem' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                <Line type="monotone" dataKey="imc" stroke="var(--primary-color)" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <CartesianGrid stroke="#e2e8f0" strokeDasharray="5 5" vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickMargin={10} />
+                <YAxis domain={['dataMin - 1', 'dataMax + 1']} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-md)' }}
+                  labelStyle={{ fontWeight: 'bold', color: 'var(--text-main)', marginBottom: '4px' }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <p style={{ marginTop: '1rem', color: 'var(--text-muted)' }}>Requiere al menos una consulta para visualizar evolución.</p>
         )}
       </div>
     </div>
