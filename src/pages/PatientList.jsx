@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getPatients } from '../api';
 import TagBadge from '../components/TagBadge';
+import { formatAppointment } from '../utils';
 
 export default function PatientList() {
   const [patients, setPatients] = useState([]);
@@ -68,7 +69,7 @@ export default function PatientList() {
           <td style={{ maxWidth: '250px' }}>
             {tags.length > 0 ? tags.map(t => <TagBadge key={t} tag={t} />) : <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>-</span>}
           </td>
-          <td>{patient.next_appointment ? new Date(patient.next_appointment).toLocaleDateString() + ' (GMT)' : 'Sin turno'}</td>
+          <td>{formatAppointment(patient.next_appointment)}</td>
           <td style={{ textAlign: 'right', color: 'var(--primary-color)' }}>❯</td>
         </tr>
       );

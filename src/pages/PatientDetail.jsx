@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getPatient, getConsultations, updatePatientGoal } from '../api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import TagBadge from '../components/TagBadge';
+import { formatAppointment } from '../utils';
 
 export default function PatientDetail() {
   const { id } = useParams();
@@ -61,22 +62,32 @@ export default function PatientDetail() {
         </Link>
         {patient.next_appointment && (
           <span style={{ backgroundColor: '#f0fdf4', color: '#166534', padding: '0.5rem 1rem', borderRadius: 'var(--border-radius)', fontWeight: 'bold', border: '1px solid #bbf7d0' }}>
-            📅 Próximo Turno: {new Date(patient.next_appointment).toLocaleDateString()} (GMT)
+            📅 Próximo Turno: {formatAppointment(patient.next_appointment)}
           </span>
         )}
       </div>
 
       <div className="card">
-        <div className="card-header">
+        <div className="card-header" style={{ alignItems: 'flex-start' }}>
           <div>
-            <h2>{patient.first_name} {patient.last_name}</h2>
+            <h2 style={{ 
+              fontSize: '2.5rem', 
+              fontWeight: '800', 
+              background: 'linear-gradient(90deg, var(--primary-dark), var(--primary-color))', 
+              WebkitBackgroundClip: 'text', 
+              WebkitTextFillColor: 'transparent',
+              margin: '0',
+              lineHeight: '1.2'
+            }}>
+              {patient.first_name} {patient.last_name}
+            </h2>
             {parsedTags.length > 0 && (
               <div style={{ marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.2rem' }}>
                 {parsedTags.map(t => <TagBadge key={t} tag={t} />)}
               </div>
             )}
           </div>
-          <Link to={`/patients/${id}/consultations/new`} className="btn btn-primary">
+          <Link to={`/patients/${id}/consultations/new`} className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
             Añadir Consulta
           </Link>
         </div>
@@ -94,30 +105,31 @@ export default function PatientDetail() {
             <div className="stat-label">Teléfono</div>
             <div className="stat-value" style={{ fontSize: '1.2rem', marginTop: '0.4rem' }}>{patient.phone || 'N/A'}</div>
           </div>
-          <div className="stat-card" style={{ gridColumn: 'span 2' }}>
-            <div className="stat-label flex-row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>Objetivo</span>
+          <div className="stat-card" style={{ gridColumn: 'span 2', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div className="stat-label flex-row" style={{ width: '100%', justifyContent: 'center', alignItems: 'center', gap: '1rem', position: 'relative' }}>
+              <span>Objetivo Principal</span>
               {!isEditingGoal && (
-                <button onClick={() => setIsEditingGoal(true)} className="btn btn-secondary" style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }} title="Editar objetivo">
+                <button onClick={() => setIsEditingGoal(true)} className="btn btn-secondary" style={{ position: 'absolute', right: '0', padding: '0.2rem 0.5rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }} title="Editar objetivo">
                   ✏️ Editar
                 </button>
               )}
             </div>
             {isEditingGoal ? (
-              <div style={{ marginTop: '0.5rem' }}>
+              <div style={{ marginTop: '1rem', width: '100%', maxWidth: '600px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <textarea 
                   className="form-input" 
                   value={tempGoal} 
                   onChange={e => setTempGoal(e.target.value)}
-                  style={{ minHeight: '60px' }}
+                  style={{ width: '100%', minHeight: '80px', textAlign: 'center', resize: 'vertical' }}
+                  placeholder="Define el objetivo principal del paciente..."
                 />
-                <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem' }}>
+                <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
                   <button onClick={handleSaveGoal} className="btn btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>Guardar</button>
                   <button onClick={() => { setIsEditingGoal(false); setTempGoal(patient.goal || ''); }} className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>Cancelar</button>
                 </div>
               </div>
             ) : (
-              <div style={{ fontSize: '1.2rem', fontWeight: '500', color: 'var(--text-main)', marginTop: '0.5rem' }}>
+              <div style={{ fontSize: '1.3rem', fontWeight: '500', color: 'var(--text-main)', marginTop: '1rem', maxWidth: '800px', lineHeight: '1.5' }}>
                 {patient.goal || 'Sin objetivo establecido'}
               </div>
             )}

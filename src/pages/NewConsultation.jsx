@@ -127,7 +127,7 @@ export default function NewConsultation() {
           <div className="form-group" style={{ flex: 1, borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
             <label className="form-label" style={{ color: 'var(--primary-dark)', fontWeight: 'bold' }}>📅 Próxima Cita (Opcional)</label>
             <input
-              type="date"
+              type="datetime-local"
               name="next_appointment"
               className="form-input"
               value={formData.next_appointment}
