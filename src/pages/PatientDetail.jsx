@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getPatient, getConsultations, updatePatientGoal } from '../api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import TagBadge from '../components/TagBadge';
 
 export default function PatientDetail() {
   const { id } = useParams();
@@ -10,6 +11,7 @@ export default function PatientDetail() {
   const [loading, setLoading] = useState(true);
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [tempGoal, setTempGoal] = useState('');
+  const [graphMetric, setGraphMetric] = useState('weight'); // 'weight' or 'imc'
 
   useEffect(() => {
     Promise.all([getPatient(id), getConsultations(id)])
@@ -41,20 +43,39 @@ export default function PatientDetail() {
   // Preparar datos para el gráfico (orden cronológico)
   const chartData = [...consultations].reverse().map(c => ({
     name: new Date(c.date).toLocaleDateString(),
-    imc: parseFloat(c.bmi)
+    imc: parseFloat(c.bmi),
+    weight: parseFloat(c.weight)
   }));
+
+  let parsedTags = [];
+  try {
+    if (typeof patient.tags === 'string') parsedTags = JSON.parse(patient.tags);
+    else if (Array.isArray(patient.tags)) parsedTags = patient.tags;
+  } catch (e) { parsedTags = []; }
 
   return (
     <div>
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link to="/" className="btn btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
           ← Volver a Pacientes
         </Link>
+        {patient.next_appointment && (
+          <span style={{ backgroundColor: '#f0fdf4', color: '#166534', padding: '0.5rem 1rem', borderRadius: 'var(--border-radius)', fontWeight: 'bold', border: '1px solid #bbf7d0' }}>
+            📅 Próximo Turno: {new Date(patient.next_appointment).toLocaleDateString()} (GMT)
+          </span>
+        )}
       </div>
 
       <div className="card">
         <div className="card-header">
-          <h2>{patient.first_name} {patient.last_name}</h2>
+          <div>
+            <h2>{patient.first_name} {patient.last_name}</h2>
+            {parsedTags.length > 0 && (
+              <div style={{ marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.2rem' }}>
+                {parsedTags.map(t => <TagBadge key={t} tag={t} />)}
+              </div>
+            )}
+          </div>
           <Link to={`/patients/${id}/consultations/new`} className="btn btn-primary">
             Añadir Consulta
           </Link>
@@ -136,16 +157,36 @@ export default function PatientDetail() {
       </div>
 
       <div className="card mt-4">
-        <h3>Evolución de IMC</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>Evolución de {graphMetric === 'weight' ? 'Peso (kg)' : 'IMC'}</h3>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+             <button 
+               className="btn" 
+               style={{ padding: '0.3rem 0.8rem', backgroundColor: graphMetric === 'weight' ? 'var(--primary-color)' : '#e2e8f0', color: graphMetric === 'weight' ? 'white' : 'var(--text-main)', border: 'none' }} 
+               onClick={() => setGraphMetric('weight')}
+             >
+               Peso
+             </button>
+             <button 
+               className="btn" 
+               style={{ padding: '0.3rem 0.8rem', backgroundColor: graphMetric === 'imc' ? 'var(--primary-color)' : '#e2e8f0', color: graphMetric === 'imc' ? 'white' : 'var(--text-main)', border: 'none' }} 
+               onClick={() => setGraphMetric('imc')}
+             >
+               IMC
+             </button>
+          </div>
+        </div>
+
         {consultations.length > 0 ? (
           <div style={{ height: '300px', width: '100%', marginTop: '1rem' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <Line type="monotone" dataKey="imc" stroke="var(--primary-color)" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey={graphMetric} stroke="var(--primary-color)" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                 <CartesianGrid stroke="#e2e8f0" strokeDasharray="5 5" vertical={false} />
                 <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickMargin={10} />
                 <YAxis domain={['dataMin - 1', 'dataMax + 1']} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
                 <Tooltip 
+                  formatter={(value) => [`${value} ${graphMetric === 'weight' ? 'kg' : ''}`, graphMetric === 'weight' ? 'Peso' : 'IMC']}
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-md)' }}
                   labelStyle={{ fontWeight: 'bold', color: 'var(--text-main)', marginBottom: '4px' }}
                 />

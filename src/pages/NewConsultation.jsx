@@ -10,14 +10,15 @@ export default function NewConsultation() {
 
   // Obtener la fecha local real, no la UTC
   const today = new Date();
-  const rawDateStr = today.getFullYear() + '-' + 
-    String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+  const rawDateStr = today.getFullYear() + '-' +
+    String(today.getMonth() + 1).padStart(2, '0') + '-' +
     String(today.getDate()).padStart(2, '0');
 
   const [formData, setFormData] = useState({
     weight: '',
     notes: '',
-    date: rawDateStr
+    date: rawDateStr,
+    next_appointment: ''
   });
   const [error, setError] = useState(null);
 
@@ -33,7 +34,8 @@ export default function NewConsultation() {
       await createConsultation(id, {
         weight: parseFloat(formData.weight),
         notes: formData.notes,
-        date: formData.date
+        date: formData.date,
+        next_appointment: formData.next_appointment || null
       });
       navigate(`/patients/${id}`);
     } catch (err) {
@@ -49,7 +51,7 @@ export default function NewConsultation() {
   if (!patient && !error) return <p>Cargando información del paciente...</p>;
 
   // Simulate calculated BMI interactively if weight is provided
-  const interactiveBmi = formData.weight && patient?.height 
+  const interactiveBmi = formData.weight && patient?.height
     ? (parseFloat(formData.weight) / (patient.height * patient.height)).toFixed(2)
     : '--';
 
@@ -69,11 +71,11 @@ export default function NewConsultation() {
         <div className="flex-row" style={{ gap: '1rem', marginBottom: '1rem' }}>
           <div className="form-group" style={{ flex: 1 }}>
             <label className="form-label">Fecha de la Consulta</label>
-            <input 
-              required 
-              type="date" 
-              name="date" 
-              className="form-input" 
+            <input
+              required
+              type="date"
+              name="date"
+              className="form-input"
               value={formData.date}
               onChange={handleChange}
             />
@@ -82,23 +84,23 @@ export default function NewConsultation() {
         <div className="flex-row" style={{ gap: '1rem' }}>
           <div className="form-group" style={{ flex: 1 }}>
             <label className="form-label">Peso Promedio (kg)</label>
-            <input 
-              required 
-              type="number" 
-              step="0.1" 
-              name="weight" 
-              className="form-input" 
+            <input
+              required
+              type="number"
+              step="0.1"
+              name="weight"
+              className="form-input"
               min="1"
               value={formData.weight}
               onChange={handleChange}
             />
           </div>
-          
+
           <div className="form-group" style={{ flex: 1 }}>
             <label className="form-label" style={{ color: 'var(--text-muted)' }}>IMC Calculado (Auto)</label>
-            <div style={{ 
-              padding: '0.75rem', 
-              background: '#f1f5f9', 
+            <div style={{
+              padding: '0.75rem',
+              background: '#f1f5f9',
               borderRadius: 'var(--border-radius)',
               fontSize: '1.2rem',
               fontWeight: '700',
@@ -112,13 +114,27 @@ export default function NewConsultation() {
 
         <div className="form-group">
           <label className="form-label">Notas / Observaciones</label>
-          <textarea 
-            name="notes" 
-            className="form-input" 
+          <textarea
+            name="notes"
+            className="form-input"
             value={formData.notes}
             onChange={handleChange}
             placeholder="Añade observaciones de la visita, cambios en la dieta, humor del paciente..."
           ></textarea>
+        </div>
+
+        <div className="flex-row mt-2" style={{ gap: '1rem' }}>
+          <div className="form-group" style={{ flex: 1, borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
+            <label className="form-label" style={{ color: 'var(--primary-dark)', fontWeight: 'bold' }}>📅 Próxima Cita (Opcional)</label>
+            <input
+              type="date"
+              name="next_appointment"
+              className="form-input"
+              value={formData.next_appointment}
+              onChange={handleChange}
+            />
+            <small style={{ color: 'var(--text-muted)' }}>Esto actualizará el perfil del paciente y aparecerá en tu panel principal de próximos turnos.</small>
+          </div>
         </div>
 
         <div className="flex-row mt-4" style={{ justifyContent: 'flex-end', gap: '1rem' }}>

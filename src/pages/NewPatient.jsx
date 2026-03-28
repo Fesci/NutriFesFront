@@ -4,14 +4,29 @@ import { createPatient } from '../api';
 
 export default function NewPatient() {
   const navigate = useNavigate();
+  const availableTags = [
+    'Vegano', 'Vegetariano', 'Celiaquía', 'Sedentario', 'Deportista', 
+    'Adulto Mayor', 'Obesidad', 'Diabetes', 'TCA', 'Embarazo/Lactancia'
+  ];
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     age: '',
     height: '',
     goal: '',
-    phone: ''
+    phone: '',
+    tags: []
   });
+
+  const toggleTag = (tag) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.includes(tag) 
+        ? prev.tags.filter(t => t !== tag)
+        : [...prev.tags, tag]
+    }));
+  };
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +41,8 @@ export default function NewPatient() {
         age: parseInt(formData.age, 10),
         height: parseFloat(formData.height),
         goal: formData.goal,
-        phone: formData.phone
+        phone: formData.phone,
+        tags: formData.tags
       });
       navigate(`/patients/${newPatient.id}`);
     } catch (err) {
@@ -145,6 +161,33 @@ export default function NewPatient() {
               onChange={handleChange}
               placeholder="Ej: Bajar 5kg, ganar masa muscular..."
             />
+          </div>
+        </div>
+
+        <div className="form-group mt-4">
+          <label className="form-label">Etiquetas Clínicas y de Estilo de Vida (Opcional)</label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginTop: '0.5rem' }}>
+            {availableTags.map(tag => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => toggleTag(tag)}
+                style={{
+                  padding: '0.4rem 0.8rem',
+                  borderRadius: '20px',
+                  border: formData.tags.includes(tag) ? '2px solid var(--primary-color)' : '1px solid #d1d5db',
+                  backgroundColor: formData.tags.includes(tag) ? '#e0f2fe' : '#f8fafc',
+                  color: formData.tags.includes(tag) ? 'var(--primary-dark)' : '#475569',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: formData.tags.includes(tag) ? '600' : '400',
+                  boxShadow: formData.tags.includes(tag) ? '0 2px 4px rgba(56, 189, 248, 0.2)' : 'none',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {tag}
+              </button>
+            ))}
           </div>
         </div>
 
