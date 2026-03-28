@@ -13,9 +13,12 @@ export default function NewPatient() {
     phone: ''
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     try {
       const newPatient = await createPatient({
         first_name: formData.first_name,
@@ -28,6 +31,7 @@ export default function NewPatient() {
       navigate(`/patients/${newPatient.id}`);
     } catch (err) {
       setError(err.message);
+      setLoading(false);
     }
   };
 
@@ -146,7 +150,9 @@ export default function NewPatient() {
 
         <div className="flex-row mt-4" style={{ justifyContent: 'flex-end', gap: '1rem' }}>
           <Link to="/" className="btn btn-secondary">Cancelar</Link>
-          <button type="submit" className="btn btn-primary">Guardar Paciente</button>
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Guardando paciente...' : 'Guardar Paciente'}
+          </button>
         </div>
       </form>
     </div>

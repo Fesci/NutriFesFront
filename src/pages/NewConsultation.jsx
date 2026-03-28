@@ -6,10 +6,18 @@ export default function NewConsultation() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [patient, setPatient] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Obtener la fecha local real, no la UTC
+  const today = new Date();
+  const rawDateStr = today.getFullYear() + '-' + 
+    String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+    String(today.getDate()).padStart(2, '0');
+
   const [formData, setFormData] = useState({
     weight: '',
     notes: '',
-    date: new Date().toISOString().split('T')[0]
+    date: rawDateStr
   });
   const [error, setError] = useState(null);
 
@@ -19,6 +27,8 @@ export default function NewConsultation() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     try {
       await createConsultation(id, {
         weight: parseFloat(formData.weight),
@@ -28,6 +38,7 @@ export default function NewConsultation() {
       navigate(`/patients/${id}`);
     } catch (err) {
       setError(err.message);
+      setLoading(false);
     }
   };
 
@@ -112,7 +123,9 @@ export default function NewConsultation() {
 
         <div className="flex-row mt-4" style={{ justifyContent: 'flex-end', gap: '1rem' }}>
           <Link to={`/patients/${id}`} className="btn btn-secondary">Cancelar</Link>
-          <button type="submit" className="btn btn-primary">Registrar Consulta</button>
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Guardando consulta...' : 'Registrar Consulta'}
+          </button>
         </div>
       </form>
     </div>
