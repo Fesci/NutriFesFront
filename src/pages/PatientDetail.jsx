@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getPatient, getConsultations, getAiRecommendation, updatePatientGoal } from '../api';
+import { getPatient, getConsultations, updatePatientGoal } from '../api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function PatientDetail() {
   const { id } = useParams();
   const [patient, setPatient] = useState(null);
   const [consultations, setConsultations] = useState([]);
-  const [aiRec, setAiRec] = useState('');
   const [loading, setLoading] = useState(true);
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [tempGoal, setTempGoal] = useState('');
@@ -25,16 +24,6 @@ export default function PatientDetail() {
         setLoading(false);
       });
   }, [id]);
-
-  const loadAiRecommendation = async () => {
-    try {
-      setAiRec('Cargando recomendación...');
-      const data = await getAiRecommendation(id);
-      setAiRec(data.recommendation);
-    } catch (err) {
-      setAiRec('Error al cargar IA.');
-    }
-  };
 
   const handleSaveGoal = async () => {
     try {
@@ -106,18 +95,6 @@ export default function PatientDetail() {
               </div>
             )}
           </div>
-        </div>
-
-        <div className="mt-4">
-          <button onClick={loadAiRecommendation} className="btn btn-secondary mb-4">
-            Generar Sugerencia IA (Placeholder)
-          </button>
-          {aiRec && (
-            <div style={{ backgroundColor: '#f0f9ff', padding: '1rem', borderRadius: 'var(--border-radius)', border: '1px solid #bae6fd' }}>
-              <strong>Sugerencia IA: </strong>
-              <span>{aiRec}</span>
-            </div>
-          )}
         </div>
       </div>
 

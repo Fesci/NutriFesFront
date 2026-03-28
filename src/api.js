@@ -48,12 +48,3 @@ export const createConsultation = async (patientId, consultationData) => {
   return res.json();
 };
 
-export const getAiRecommendation = async (patientId) => {
-  const res = await fetch(`${API_URL}/ai/recommendations`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ patient_id: patientId })
-  });
-  if (!res.ok) throw new Error('Failed to fetch recommendation');
-  return res.json();
-};
