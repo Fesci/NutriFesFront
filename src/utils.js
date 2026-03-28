@@ -8,7 +8,8 @@ export const formatAppointment = (dateString) => {
     month: '2-digit', 
     year: 'numeric', 
     hour: '2-digit', 
-    minute: '2-digit' 
+    minute: '2-digit',
+    hour12: false
   };
   
   let formatted = date.toLocaleDateString('es-AR', options);
