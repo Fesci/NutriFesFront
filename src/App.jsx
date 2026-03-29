@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import PatientList from './pages/PatientList';
 import PatientDetail from './pages/PatientDetail';
 import NewPatient from './pages/NewPatient';
+import EditPatient from './pages/EditPatient';
 import NewConsultation from './pages/NewConsultation';
 
 function Layout({ children }) {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/" element={<PatientList />} />
           <Route path="/patients/new" element={<NewPatient />} />
           <Route path="/patients/:id" element={<PatientDetail />} />
+          <Route path="/patients/:id/edit" element={<EditPatient />} />
           <Route path="/patients/:id/consultations/new" element={<NewConsultation />} />
         </Routes>
       </Layout>

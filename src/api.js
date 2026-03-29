@@ -32,6 +32,26 @@ export const updatePatientGoal = async (patientId, goal) => {
   return res.json();
 };
 
+export const updatePatient = async (patientId, patientData) => {
+  const res = await fetch(`${API_URL}/patients/${patientId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(patientData)
+  });
+  if (!res.ok) throw new Error('Failed to update patient');
+  return res.json();
+};
+
+export const updatePatientNextAppointment = async (patientId, nextAppointment) => {
+  const res = await fetch(`${API_URL}/patients/${patientId}/next_appointment`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ next_appointment: nextAppointment })
+  });
+  if (!res.ok) throw new Error('Failed to update next appointment');
+  return res.json();
+};
+
 export const getConsultations = async (patientId) => {
   const res = await fetch(`${API_URL}/patients/${patientId}/consultations`);
   if (!res.ok) throw new Error('Failed to fetch consultations');

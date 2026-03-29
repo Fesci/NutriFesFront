@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getPatient, getConsultations, updatePatientGoal } from '../api';
+import { getPatient, getConsultations, updatePatientGoal, updatePatientNextAppointment } from '../api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import TagBadge from '../components/TagBadge';
 import { formatAppointment } from '../utils';
@@ -12,6 +12,8 @@ export default function PatientDetail() {
   const [loading, setLoading] = useState(true);
   const [isEditingGoal, setIsEditingGoal] = useState(false);
   const [tempGoal, setTempGoal] = useState('');
+  const [isEditingAppointment, setIsEditingAppointment] = useState(false);
+  const [tempAppointment, setTempAppointment] = useState('');
   const [graphMetric, setGraphMetric] = useState('weight'); // 'weight' or 'imc'
 
   useEffect(() => {
@@ -27,6 +29,16 @@ export default function PatientDetail() {
         setLoading(false);
       });
   }, [id]);
+
+  const handleSaveAppointment = async () => {
+    try {
+      await updatePatientNextAppointment(id, tempAppointment);
+      setPatient(prev => ({ ...prev, next_appointment: tempAppointment || null }));
+      setIsEditingAppointment(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleSaveGoal = async () => {
     try {
@@ -60,27 +72,66 @@ export default function PatientDetail() {
         <Link to="/" className="btn btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
           ← Volver a Pacientes
         </Link>
-        {patient.next_appointment && (
-          <span style={{ backgroundColor: '#f0fdf4', color: '#166534', padding: '0.5rem 1rem', borderRadius: 'var(--border-radius)', fontWeight: 'bold', border: '1px solid #bbf7d0' }}>
-            📅 Próximo Turno: {formatAppointment(patient.next_appointment)}
-          </span>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {isEditingAppointment ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#f0fdf4', padding: '0.4rem', borderRadius: 'var(--border-radius)', border: '1px solid #bbf7d0' }}>
+              <input 
+                type="datetime-local" 
+                className="form-input" 
+                value={tempAppointment} 
+                onChange={e => setTempAppointment(e.target.value)} 
+                style={{ padding: '0.2rem 0.5rem', fontSize: '0.9rem' }}
+              />
+              <button onClick={handleSaveAppointment} className="btn btn-primary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}>Guardar</button>
+              <button 
+                onClick={() => setIsEditingAppointment(false)} 
+                className="btn btn-secondary" 
+                style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}
+              >
+                Cancelar
+              </button>
+            </div>
+          ) : (
+            patient.next_appointment && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#f0fdf4', color: '#166534', padding: '0.5rem 1rem', borderRadius: 'var(--border-radius)', fontWeight: 'bold', border: '1px solid #bbf7d0' }}>
+                📅 Próximo Turno: {formatAppointment(patient.next_appointment)}
+                <button 
+                  onClick={() => { 
+                    const d = new Date(patient.next_appointment);
+                    const localISOTime = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0,16);
+                    setTempAppointment(localISOTime);
+                    setIsEditingAppointment(true); 
+                  }} 
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', fontSize: '1rem', marginLeft: '0.5rem' }} 
+                  title="Editar turno"
+                >
+                  ✏️
+                </button>
+              </span>
+            )
+          )}
+        </div>
       </div>
 
       <div className="card">
         <div className="card-header" style={{ alignItems: 'flex-start' }}>
           <div>
-            <h2 style={{ 
-              fontSize: '2.5rem', 
-              fontWeight: '800', 
-              background: 'linear-gradient(90deg, var(--primary-dark), var(--primary-color))', 
-              WebkitBackgroundClip: 'text', 
-              WebkitTextFillColor: 'transparent',
-              margin: '0',
-              lineHeight: '1.2'
-            }}>
-              {patient.first_name} {patient.last_name}
-            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <h2 style={{ 
+                fontSize: '2.5rem', 
+                fontWeight: '800', 
+                background: 'linear-gradient(90deg, var(--primary-dark), var(--primary-color))', 
+                WebkitBackgroundClip: 'text', 
+                WebkitTextFillColor: 'transparent',
+                margin: '0',
+                lineHeight: '1.2'
+              }}>
+                {patient.first_name} {patient.last_name}
+              </h2>
+              <Link to={`/patients/${id}/edit`} className="btn btn-secondary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }} title="Editar perfil">
+                ✏️ Editar
+              </Link>
+            </div>
             {parsedTags.length > 0 && (
               <div style={{ marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.2rem' }}>
                 {parsedTags.map(t => <TagBadge key={t} tag={t} />)}
