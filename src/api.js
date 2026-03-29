@@ -1,4 +1,6 @@
-const API_URL = 'https://nutrifesbackend.onrender.com/api';
+const API_URL = import.meta.env.DEV 
+  ? 'http://localhost:3001/api' 
+  : 'https://nutrifesbackend.onrender.com/api';
 
 export const getPatients = async () => {
   const res = await fetch(`${API_URL}/patients`);
