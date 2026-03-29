@@ -78,66 +78,72 @@ export default function PatientList() {
 
   return (
     <div>
-      <div className="card-header">
-        <h2>Listado de Pacientes</h2>
-        <div>
-          <input 
-            type="text" 
-            placeholder="Buscar paciente..."
-            className="form-input"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '250px' }}
-          />
-        </div>
-      </div>
-
-      {loading ? (
-        <p>Cargando pacientes...</p>
-      ) : (
-        <>
-          {upcomingAppointments.length > 0 && (
-            <div className="card mb-4" style={{ backgroundColor: '#f0fdf4', borderColor: '#bbf7d0' }}>
-              <h3 style={{ color: '#166534', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                📅 Próximos Turnos (7 días)
-              </h3>
-              <div className="table-container">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Paciente</th>
-                      <th>Edad</th>
-                      <th>Etiquetas</th>
-                      <th>Fecha de Turno</th>
-                      <th></th>
+    {loading ? (
+      <p>Cargando pacientes...</p>
+    ) : (
+      <>
+        {upcomingAppointments.length > 0 && (
+          <div className="card mb-4" style={{ 
+            backgroundColor: '#f0fdf4', 
+            borderColor: '#bbf7d0',
+            maxWidth: '600px',
+            margin: '0 auto 2rem auto',
+            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)'
+          }}>
+            <h3 style={{ color: '#166534', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+              📅 Próximos Turnos (7 días)
+            </h3>
+            <div className="table-container" style={{overflowX: 'hidden'}}>
+              <table className="data-table" style={{ margin: 0 }}>
+                <tbody>
+                  {upcomingAppointments.slice(0, 10).map(patient => (
+                    <tr key={patient.id} style={{ backgroundColor: 'transparent' }}>
+                      <td style={{ fontWeight: '500', padding: '0.75rem', borderBottom: '1px solid #dcfce3', color: '#166534' }}>
+                        {patient.first_name} {patient.last_name}
+                      </td>
+                      <td style={{ textAlign: 'right', padding: '0.75rem', borderBottom: '1px solid #dcfce3', color: '#15803d', fontWeight: '500' }}>
+                        {formatAppointment(patient.next_appointment)}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                     {renderPatientRows(upcomingAppointments.slice(0, 10), "No hay turnos agendados.")}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-
-          <div className="table-container mt-4">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Paciente</th>
-                  <th>Edad</th>
-                  <th>Etiquetas</th>
-                  <th>Próximo Turno</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {renderPatientRows(filteredPatients, "No se encontraron pacientes.")}
-              </tbody>
-            </table>
           </div>
-        </>
-      )}
+        )}
+
+        <div className="card-header">
+          <h2>Listado de Pacientes</h2>
+          <div>
+            <input 
+              type="text" 
+              placeholder="Buscar paciente..."
+              className="form-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '250px' }}
+            />
+          </div>
+        </div>
+
+        <div className="table-container mt-4">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Edad</th>
+                <th>Etiquetas</th>
+                <th>Próximo Turno</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {renderPatientRows(filteredPatients, "No se encontraron pacientes.")}
+            </tbody>
+          </table>
+        </div>
+      </>
+    )}
     </div>
   );
 }
