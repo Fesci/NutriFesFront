@@ -45,7 +45,22 @@ export default function NewConsultation() {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+
+    if (name === 'weight') {
+      value = value.replace(',', '.').replace(/[^0-9.]/g, '');
+      let parts = value.split('.');
+      if (parts.length > 2) {
+        parts = [parts[0], parts.slice(1).join('')];
+        value = parts.join('.');
+      }
+      // Limitar a un máximo de 2 decimales
+      if (parts.length === 2 && parts[1].length > 2) {
+        value = `${parts[0]}.${parts[1].substring(0, 2)}`;
+      }
+    }
+
+    setFormData({ ...formData, [name]: value });
   };
 
   if (!patient && !error) return <p>Cargando información del paciente...</p>;
@@ -86,12 +101,12 @@ export default function NewConsultation() {
             <label className="form-label">Peso Promedio (kg)</label>
             <input
               required
-              type="number"
-              step="0.1"
+              type="text"
+              inputMode="decimal"
               name="weight"
               className="form-input"
-              min="1"
               value={formData.weight}
+              placeholder="Ej: 75.5"
               onChange={handleChange}
             />
           </div>
