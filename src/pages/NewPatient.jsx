@@ -6,7 +6,7 @@ export default function NewPatient() {
   const navigate = useNavigate();
   const availableTags = [
     'Vegano', 'Vegetariano', 'Celiaquía', 'Sedentario', 'Deportista',
-    'Adulto Mayor', 'Obesidad', 'Diabetes', 'TCA', 'Embarazo/Lactancia'
+    'Adulto Mayor', 'Sobrepeso', 'Obesidad', 'Diabetes', 'TCA', 'Embarazo/Lactancia'
   ];
 
   const [formData, setFormData] = useState({
